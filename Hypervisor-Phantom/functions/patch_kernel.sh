@@ -127,7 +127,7 @@ modify_customization_cfg() {
       read -p "  Enter your choice [1-16]: " choice
       case "$choice" in
         1) selected="k8" ;;
-        2) selected="k8sse3" ;;
+        2) selected="k8-sse3" ;;
         3) selected="k10" ;;
         4) selected="barcelona" ;;
         5) selected="bobcat" ;;
@@ -136,12 +136,12 @@ modify_customization_cfg() {
         8) selected="piledriver" ;;
         9) selected="steamroller" ;;
         10) selected="excavator" ;;
-        11) selected="zen" ;;
-        12) selected="zen2" ;;
-        13) selected="zen3" ;;
-        14) selected="zen4" ;;
-        15) selected="zen5" ;;
-        16) selected="native_amd" ;;
+        11) selected="znver1" ;;
+        12) selected="znver2" ;;
+        13) selected="znver3" ;;
+        14) selected="znver4" ;;
+        15) selected="znver5" ;;
+        16) selected="native" ;;
         *)
           clear; fmtr::error "Invalid option, please try again."
           prmt::quick_prompt "$(fmtr::info 'Press any key to continue...')"
@@ -190,7 +190,7 @@ modify_customization_cfg() {
         23) selected="alderlake" ;;
         24) selected="raptorlake" ;;
         25) selected="meteorlake" ;;
-        26) selected="native_intel" ;;
+        26) selected="native" ;;
         *)
           clear; fmtr::error "Invalid option, please try again."
           prmt::quick_prompt "$(fmtr::info 'Press any key to continue...')"
@@ -296,7 +296,8 @@ systemd-boot_boot_entry_maker() {
   local TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
   local ROOT_DEVICE=$(sudo findmnt -no SOURCE /)
   local ROOTFSTYPE=$(sudo findmnt -no FSTYPE /)
-  local PARTUUID=$(sudo blkid -s PARTUUID -o value "$ROOT_DEVICE")
+  local CLEANED_DEVICE="${ROOT_DEVICE%%[*}"
+  local PARTUUID=$(sudo blkid -s PARTUUID -o value "$CLEANED_DEVICE")
 
   if [[ -z "$PARTUUID" ]]; then
     fmtr::error "Unable to determine PARTUUID for root device ($ROOT_DEVICE)."

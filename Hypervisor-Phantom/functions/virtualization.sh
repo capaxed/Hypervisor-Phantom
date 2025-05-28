@@ -28,7 +28,7 @@ configure_firewall_arch() {
   fmtr::log "Configuring firewall for Arch..."
 
   if pacman -Qs "iptables-nft" &>> "$LOG_FILE"; then
-    if grep -q '^firewall_backend *= *"iptables"' /etc/libvirt/network.conf; then
+    if sudo grep -q '^firewall_backend *= *"iptables"' /etc/libvirt/network.conf; then
       fmtr::info "firewall_backend already set to iptables (compatibility layer)"
     else
       sudo sed -i '/firewall_backend \=/s/^#//g' '/etc/libvirt/network.conf'
@@ -71,14 +71,14 @@ configure_system_installation() {
   current_user="$(whoami)"
 
   # Configure libvirtd.conf
-  if grep -q "^unix_sock_group" "$libvirtd_conf"; then
+  if sudo grep -q "^unix_sock_group" "$libvirtd_conf"; then
     fmtr::info "unix_sock_group already set"
   else
     sudo sed -i '/unix_sock_group/s/^#//g' "$libvirtd_conf"
     fmtr::info "Enabled unix_sock_group"
   fi
 
-  if grep -q "^unix_sock_rw_perms" "$libvirtd_conf"; then
+  if sudo grep -q "^unix_sock_rw_perms" "$libvirtd_conf"; then
     fmtr::info "unix_sock_rw_perms already set"
   else
     sudo sed -i '/unix_sock_rw_perms/s/^#//g' "$libvirtd_conf"
@@ -86,14 +86,14 @@ configure_system_installation() {
   fi
 
   # Configure qemu.conf
-  if grep -q "^user = \"$current_user\"" "$qemu_conf"; then
+  if sudo grep -q "^user = \"$current_user\"" "$qemu_conf"; then
     fmtr::info "qemu.conf: user already set to $current_user"
   else
     sudo sed -i "s/#user = \"root\"/user = \"$current_user\"/" "$qemu_conf"
     fmtr::info "Set qemu.conf user = $current_user"
   fi
 
-  if grep -q "^group = \"$current_user\"" "$qemu_conf"; then
+  if sudo grep -q "^group = \"$current_user\"" "$qemu_conf"; then
     fmtr::info "qemu.conf: group already set to $current_user"
   else
     sudo sed -i "s/#group = \"root\"/group = \"$current_user\"/" "$qemu_conf"

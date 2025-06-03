@@ -81,6 +81,24 @@ isolate_gpu() {
     done
 }
 
+# build_bootloader
+# Updates bootloader configurations (GRUB or systemd-boot).
+build_bootloader() {
+    case "$DISTRO" in
+        Arch)
+            sudo grub-mkconfig -o /boot/grub/grub.cfg &>> "$LOG_FILE";;
+        Debian)
+            sudo update-grub &>> "$LOG_FILE";;
+        openSUSE|Fedora)
+            sudo grub2-mkconfig -o /boot/grub2/grub.cfg &>> "$LOG_FILE";;
+        *)
+            fmtr::error "Unsupported distro, manual GRUB update required!"
+            return 1
+            ;;
+    esac
+    return 0
+}
+
 # configure_bootloader:
 # Updates bootloader configurations (GRUB or systemd-boot) with IOMMU and VFIO options.
 configure_bootloader() {
@@ -102,7 +120,7 @@ configure_bootloader() {
         fmtr::log "Configuring GRUB"
         sudo cp /etc/default/grub{,.bak}
         sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/& $iommu_setting iommu=pt vfio-pci.ids=$HWID /" /etc/default/grub
-        sudo grub-mkconfig -o /boot/grub/grub.cfg || fmtr::warn "Manual GRUB update required"
+        build_bootloader
     else
         local location config_file
         for location in "${SDBOOT_CONF_LOCATIONS[@]}"; do
@@ -164,6 +182,7 @@ revert_vfio() {
 
     if [[ -f "/etc/default/grub" ]]; then
         sudo sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/\(amd_iommu\|intel_iommu\|iommu\|vfio-pci.ids\)=[^ "]*//g' /etc/default/grub
+        build_bootloader
     else
         local location config_file
         for location in "${SDBOOT_CONF_LOCATIONS[@]}"; do

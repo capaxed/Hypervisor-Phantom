@@ -47,7 +47,7 @@ This tool provides an automated setup solution designed to evade detection from 
 
 ```
 # 1. Clone into the repository
-git clone --single-branch --depth=1 https://github.com/Scrut1ny/Hypervisor-Phantom
+git clone --single-branch --depth=1 https://github.com/capaxed/Hypervisor-Phantom
 
 # 2. CD into the repository
 cd Hypervisor-Phantom/Hypervisor-Phantom/

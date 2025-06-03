@@ -28,7 +28,7 @@ readonly FAKE_BATTERY_ACPITABLE="${PATCH_DIR}/fake_battery.dsl"
 REQUIRED_PKGS_Arch=(
   # Basic Build Dependencie(s)
   acpica base-devel dmidecode glib2 ninja python-packaging
-  python-sphinx python-sphinx_rtd_theme gnupg
+  libaio python-sphinx python-sphinx_rtd_theme gnupg
 
   # Spice Dependencie(s)
   spice gtk3
@@ -44,7 +44,7 @@ REQUIRED_PKGS_Debian=(
   # Basic Build Dependencie(s)
   acpica-tools build-essential libfdt-dev libglib2.0-dev
   libpixman-1-dev ninja-build python3-venv zlib1g-dev gnupg
-  python3-sphinx python3-sphinx-rtd-theme
+  libaio-dev python3-sphinx python3-sphinx-rtd-theme
 
   # Spice Dependencie(s)
   libspice-server-dev
@@ -59,10 +59,10 @@ REQUIRED_PKGS_Debian=(
 REQUIRED_PKGS_openSUSE=(
   # Basic Build Dependencie(s)
   acpica bzip2 gcc-c++ gpg2 glib2-devel make qemu  
-  libpixman-1-0-devel patch python3-Sphinx ninja
+  libaio-devel libpixman-1-0-devel patch python3-Sphinx ninja
 
   # Spice Dependencie(s)
-  spice-server
+  spice-server-devel
 
   # USB passthrough Dependencie(s)
   libusb-1_0-devel
@@ -74,7 +74,7 @@ REQUIRED_PKGS_openSUSE=(
 REQUIRED_PKGS_Fedora=(
   # Basic Build Dependencie(s)
   acpica-tools bzip2 glib2-devel libfdt-devel ninja-build
-  pixman-devel python3 zlib-ng-devel gnupg2
+  libaio-devel pixman-devel python3 zlib-ng-devel gnupg2
 
   # Spice Dependencie(s)
   spice-server-devel

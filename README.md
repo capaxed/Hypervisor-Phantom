@@ -132,7 +132,6 @@ chmod -R +x *
 
 - **Opt for a VPN**: Use a VPN to obscure all your internet traffic. However, be cautious with popular VPN services as their IP ranges may be blacklisted by certain exam proctoring or anti-cheat systems.
 - **Allocate Sufficient HV Storage**: Equip your hypervisor with at least `128GB+` of storage. Hypervisors with lower or insufficient storage are more susceptible to being identified or flagged by detection and monitoring systems.
-- **System Up Time**: Leave the hypervisor running for at least `12+` minutes to bypass a `GetTickCount()` check in a hypervisor detection tool. (This check is honestly pointless, and isn't reliable to rely on.)
 
 </details>
 
@@ -151,7 +150,7 @@ chmod -R +x *
 
 | ⭐ Rating | 💻 Software | 🧪 System Test | ✅ Bypassed |
 |:------:|:--------:|:-----------:|:--------:|
-| 🥇 | VMAware | [Repository Link](https://github.com/kernelwernel/VMAware) <br> [⬇ Download - x64 - v2.4.0 ⬇](https://github.com/kernelwernel/VMAware/releases/download/v1.5/vmaware64.exe) <br> [⬇ Download - x32 - v2.4.0 ⬇](https://github.com/kernelwernel/VMAware/releases/download/v1.5/vmaware32.exe) | ✅ |
+| 🥇 | VMAware | [Repository Link](https://github.com/kernelwernel/VMAware) <br> [⬇ Download - x64 - v2.4.0 ⬇](https://github.com/kernelwernel/VMAware/releases/download/v2.4.0/vmaware.exe) <br> [⬇ Download - x32 - v2.4.0 ⬇](https://github.com/kernelwernel/VMAware/releases/download/v2.4.0/vmaware32.exe) | ✅ |
 | 🥈 | Al-Khaser (Obsolete) | [Repository Link](https://github.com/LordNoteworthy/al-khaser) <br> [⬇ Download - x64 - v1.0.0 ⬇](https://github.com/ayoubfaouzi/al-khaser/releases/download/v1.0.0/al-khaser_x64.7z) <br> [⬇ Download - x32 - v1.0.0 ⬇](https://github.com/ayoubfaouzi/al-khaser/releases/download/v1.0.0/al-khaser_x86.7z) | ✅ |
 | 🥉 | Pafish (Obsolete) | [Repository Link](https://github.com/a0rtega/pafish) <br> [⬇ Download - x64 - v0.6 ⬇](https://github.com/a0rtega/pafish/releases/download/v0.6/pafish64.exe) <br> [⬇ Download - x32 - v0.6 ⬇](https://github.com/a0rtega/pafish/releases/download/v0.6/pafish.exe) | ✅ |
 
@@ -179,7 +178,7 @@ chmod -R +x *
 | 🛡️ Engine | 🎮 Used By | ✅ Bypassed |
 |:------:|:-------:|:--------:|
 | Anti-Cheat Expert (ACE) | Primarily Mobile Games | ✅ |
-| BattlEye (BE) | Desktop Games | ✅ (w/Kernal Patch for `R6, Destiny 2, etc...`) |
+| BattlEye (BE) | Desktop Games | ✅ (w/Windows Hyper-V + HVCI) |
 | Easy Anti-Cheat (EAC) | Desktop Games | ✅ |
 | Gepard Shield | PUBG: Battlegrounds | ✅ |
 | NACE (Netease Anticheat Expert) | Marvel Rivals | ✅ |
@@ -187,7 +186,7 @@ chmod -R +x *
 | Mhyprot | Genshin Impact | ❔ (HoYoKProtect.sys) <br> 🪟 [BSOD: ATTEMPTED_WRITE_TO_READONLY_MEMORY](https://github.com/Scrut1ny/Hypervisor-Phantom/issues/34) |
 | nProtect GameGuard (NP) | Desktop Games | ✅ |
 | RICOCHET | CoD Games | ✅ |
-| Vanguard | Valorant & LoL | ✅ (w/Hyper-V) |
+| Vanguard | Valorant & LoL | ✅ (w/Windows Hyper-V + HVCI) |
 
 </details>
 
@@ -423,27 +422,36 @@ XXXX-XX-XX XX:XX:XX.XXX-XXXX [BROWSER LOCK] [INFO] Number of display devices con
 ## Bypass Kits
 
 #### Expensive Bypass Kit (Recommended):
-- 1x2 HDMI Splitter <> [ViewHD](https://www.amazon.com/dp/B004F9LVXC) - `~$21.95`
+- 1x2 HDMI Splitter <> [ViewHD](https://www.amazon.com/dp/B004F9LVXC) - `~$22.00`
 - EDID Emulator <> [4K-EWB - HDMI 2.1 4K EDID Emulator](https://www.amazon.com/dp/B0DB7YDFD6) - `~$25.00`
-- USB HDMI Capture Card <> [Elgato HD60 X](https://www.amazon.com/dp/B09V1KJ3J4) - `~$159.99`
+- USB HDMI Capture Card <> [Elgato HD60 X](https://www.amazon.com/dp/B09V1KJ3J4) - `~$160.00`
 
 #### Cheap Bypass Kit (Not recommended):
-- 1x2 HDMI Splitter <> [OREI](https://www.amazon.com/dp/B005HXFARS) - `~$13`
-- EDID Emulator <> [EVanlak](https://www.amazon.com/dp/B07YMTKJCR) - `~$7`
-- USB HDMI Capture Card <> [AXHDCAP](https://www.amazon.com/dp/B0C2MDTY8P) - `~$9`
+- 1x2 HDMI Splitter <> [OREI](https://www.amazon.com/dp/B005HXFARS) - `~$13.00`
+- EDID Emulator <> [EVanlak](https://www.amazon.com/dp/B07YMTKJCR) - `~$7.00`
+- USB HDMI Capture Card <> [AXHDCAP](https://www.amazon.com/dp/B0C2MDTY8P) - `~$9.00`
 
 ## Equipment List
-- Capture Card(s)
-    - [Elgato HD60 X](https://www.amazon.com/dp/B09V1KJ3J4) - `~$159.99`
-    - [Elgato Cam Link](https://www.amazon.com/dp/B07K3FN5MR) - `~$97.99`
+- External USB Capture Card(s)
+    - Elgato
+        - [HD60 X | 10GBE9901](https://www.amazon.com/dp/B09V1KJ3J4) - `~$140.00`
+        - [4K X | 20GBH9901](https://www.amazon.com/dp/B0CPFWXMBL) - `~$200.00`
+        - [Game Capture Neo | 20GBI9901](https://www.amazon.com/dp/B0CVYKQNFH) - `~$110.00`
+        - [Cam Link](https://www.amazon.com/dp/B07K3FN5MR) - `~$90.00`
     - [AXHDCAP 4K HDMI Video Capture Card](https://www.amazon.com/dp/B0C2MDTY8P) - `~$9.98`
 - 1x2 HDMI Splitter(s)
-    - [HBAVLINK](https://www.amazon.com/dp/B08T62MKH1)
-    - [CORSAHD](https://www.amazon.com/dp/B0CLL5GQXT)
-    - [ViewHD](https://www.amazon.com/dp/B004F9LVXC)
-    - [OREI](https://www.amazon.com/dp/B005HXFARS)
-    - [EZCOO](https://www.amazon.com/dp/B07VP37KMB)
-    - [EZCOO](https://www.amazon.com/dp/B07TZRXKYG)
+    - [U9 / ViewHD](https://u9ltd.myshopify.com/collections/splitter)
+        - [VHD-1X2MN3D](https://www.amazon.com/dp/B004F9LVXC) - 
+        - [VHD-1X2MN3D](https://www.amazon.com/dp/B086JKRSW1) - `~$18.00`
+    - HBAVLINK
+        - [HB-SP102B](https://www.amazon.com/dp/B08T62MKH1)
+        - [HB-SP102C](https://www.amazon.com/dp/B08T64JWWT)
+    - CORSAHD
+        - [CO-SP12H2](https://www.amazon.com/dp/B0CLL5GQXT)
+        - [?????????](https://www.amazon.com/dp/B0CXHQNSWM)
+    - EZCOO
+        - [EZ-SP12H2](https://www.amazon.com/dp/B07VP37KMB)
+        - [EZ-EX11HAS-PRO](https://www.amazon.com/dp/B07TZRXKYG)
 - EDID Emulator(s)
     - HDMI
         - Brand: THWT

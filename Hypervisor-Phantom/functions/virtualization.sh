@@ -28,7 +28,7 @@ configure_firewall_arch() {
   fmtr::log "Configuring firewall for Arch..."
 
   if pacman -Qs "iptables-nft" &>> "$LOG_FILE"; then
-    if grep -q '^firewall_backend *= *"iptables"' /etc/libvirt/network.conf; then
+    if sudo grep -q '^firewall_backend *= *"iptables"' /etc/libvirt/network.conf; then
       fmtr::info "firewall_backend already set to iptables (compatibility layer)"
     else
       sudo sed -i '/firewall_backend \=/s/^#//g' '/etc/libvirt/network.conf'
@@ -75,7 +75,7 @@ configure_system_installation() {
     local file="$1"
     local key="$2"
     local value="$3"
-    if grep -q "^${key}" "$file"; then
+    if sudo grep -q "^${key}" "$file"; then
       fmtr::info "$file: $key already set"
     else
       sudo sed -i "/${key}/s/^#//g" "$file" || echo "${key} ${value}" | sudo tee -a "$file" > /dev/null
@@ -86,7 +86,7 @@ configure_system_installation() {
   # Helper to set qemu.conf user/group
   set_qemu_conf() {
     local conf="$1" key="$2" val="$3"
-    if grep -q "^${key} = \"${val}\"" "$conf"; then
+    if sudo grep -q "^${key} = \"${val}\"" "$conf"; then
       fmtr::info "$conf: $key already set to $val"
     else
       sudo sed -i "s/#${key} = \".*\"/${key} = \"${val}\"/" "$conf" || echo "${key} = \"${val}\"" | sudo tee -a "$conf" > /dev/null
@@ -102,7 +102,7 @@ configure_system_installation() {
 
   # Groups: kvm, libvirt
   for grp in kvm libvirt; do
-    if id -nG "$current_user" | grep -qw "$grp"; then
+    if id -nG "$current_user" | sudo grep -qw "$grp"; then
       fmtr::info "User $current_user already in $grp group"
     else
       sudo usermod -aG "$grp" "$current_user"

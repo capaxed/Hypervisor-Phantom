@@ -7,17 +7,21 @@ source "./utils/packages.sh"
 source "./utils/prompter.sh"
 
 REQUIRED_PKGS_Arch=(
-  patch qemu-base edk2-ovmf libvirt dnsmasq virt-manager patch
+  util-linux patch qemu-base edk2-ovmf libvirt dnsmasq virt-manager patch
 )
 
 REQUIRED_PKGS_Debian=(
-  patch qemu-system-x86 ovmf virt-manager libvirt-clients
+  util-linux patch qemu-system-x86 ovmf virt-manager libvirt-clients
   libvirt-daemon-system libvirt-daemon-config-network
 )
 
 REQUIRED_PKGS_openSUSE=(
-  patch libvirt libvirt-client libvirt-daemon virt-manager
+  util-linux patch libvirt libvirt-client libvirt-daemon virt-manager
   qemu qemu-kvm ovmf qemu-tools
+)
+
+REQUIRED_PKGS_Fedora=(
+  util-linux-script patch @virtualization
 )
 
 REQUIRED_PKGS_Fedora=(

@@ -13,7 +13,7 @@ declare -r CPU_VENDOR=$(case "$VENDOR_ID" in
 esac)
 
 readonly SRC_DIR="src"
-readonly QEMU_VERSION="9.2.3"
+readonly QEMU_VERSION="10.0.2"
 readonly QEMU_DIR="qemu-${QEMU_VERSION}"
 readonly QEMU_ARCHIVE="${QEMU_DIR}.tar.xz"
 readonly QEMU_SIG="${QEMU_ARCHIVE}.sig"
@@ -21,7 +21,7 @@ readonly QEMU_URL="https://download.qemu.org/${QEMU_ARCHIVE}"
 readonly QEMU_SIG_URL="${QEMU_URL}.sig"
 readonly PATCH_DIR="../../patches/QEMU"
 readonly QEMU_PATCH="${CPU_VENDOR}-${QEMU_DIR}.patch"
-readonly QEMU_LIBNFS_PATCH="${QEMU_DIR}-libnfs6.patch"
+readonly QEMU_LIBNFS_PATCH="libnfs6-${QEMU_DIR}.patch"
 readonly GPG_KEY="CEACC9E15534EBABB82D3FA03353C9CEF108B584"
 readonly FAKE_BATTERY_ACPITABLE="${PATCH_DIR}/fake_battery.dsl"
 
@@ -388,7 +388,7 @@ spoof_processor_manufacturer() {
   local chipset_file
   case "$QEMU_VERSION" in
     "8.2.6") chipset_file="$(pwd)/hw/i386/pc_q35.c" ;;
-    "9.2.3"|"10.0.0") chipset_file="$(pwd)/hw/i386/fw_cfg.c" ;;
+    "9.2.4"|"10.0.2") chipset_file="$(pwd)/hw/i386/fw_cfg.c" ;;
     *) fmtr::warn "Unsupported QEMU version: $QEMU_VERSION" ;;
   esac
 

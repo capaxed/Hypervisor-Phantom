@@ -119,7 +119,7 @@ configure_bootloader() {
     if [[ -f "/etc/default/grub" ]]; then
         fmtr::log "Configuring GRUB"
         sudo cp /etc/default/grub{,.bak}
-        sudo sed -i "s/GRUB_CMDLINE_LINUX_DEFAULT=\"/& $iommu_setting iommu=pt vfio-pci.ids=$HWID /" /etc/default/grub
+        sudo sed -i "s/GRUB_CMDLINE_LINUX=\"/& $iommu_setting iommu=pt vfio-pci.ids=$HWID /" /etc/default/grub
         build_bootloader
     else
         local location config_file
@@ -181,7 +181,7 @@ revert_vfio() {
     fi
 
     if [[ -f "/etc/default/grub" ]]; then
-        sudo sed -i '/GRUB_CMDLINE_LINUX_DEFAULT=/s/\(amd_iommu\|intel_iommu\|iommu\|vfio-pci.ids\)=[^ "]*//g' /etc/default/grub
+        sudo sed -i '/GRUB_CMDLINE_LINUX=/s/\(amd_iommu\|intel_iommu\|iommu\|vfio-pci.ids\)=[^ "]*//g' /etc/default/grub
         build_bootloader
     else
         local location config_file

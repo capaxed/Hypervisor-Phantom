@@ -23,7 +23,8 @@ fi
 function prmt::yes_or_no() {
   local text="$*"
   while true; do
-    read -rp "$(echo -e "${text} [y/n]: ")" answer
+    read -n1 -srp "$(echo -e "${text} [y/n]: ")" answer
+    echo "$answer"
     echo "$answer" &>> "$LOG_FILE" # logging
     case "$answer" in
       [Yy]*) return 0 ;; # Yes
@@ -45,6 +46,23 @@ function prmt::yes_or_no() {
 function prmt::quick_prompt() {
   local text="$*"
   read -n1 -srp "$(echo -e "$text")" response
+  echo "$response"
+
+  echo "$response" &>> "$LOG_FILE" # logging
+}
+
+###############################################################
+# Prompts the user and accepts input after 1 character.
+# Then returns answer.
+# Can be used for "Press any button to continue" screens
+# Arguments:
+#   $*: All arguments are used for `read`` prompt as one string
+# Outputs:
+#   Prompt provided and then the answer to STDOUT
+###############################################################
+function prmt::double_prompt() {
+  local text="$*"
+  read -n2 -srp "$(echo -e "$text")" response
   echo "$response"
 
   echo "$response" &>> "$LOG_FILE" # logging

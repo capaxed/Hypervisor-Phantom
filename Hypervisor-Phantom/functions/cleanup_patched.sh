@@ -69,7 +69,7 @@ cleanup_patched_edk2() {
   fmtr::info "=== Cleaning up patched EDK2/OVMF installations ==="
   
   # Remove patched OVMF files from common locations
-  local ovmf_locations=("/usr/share/edk2/x64" "/usr/share/ovmf" "/usr/share/OVMF")
+  local ovmf_locations=("/usr/share/edk2/x64")
   local total_removed=0
   
   for location in "${ovmf_locations[@]}"; do
@@ -187,7 +187,7 @@ show_cleanup_summary() {
     qemu_local_exists=true
   fi
   
-  for location in "/usr/share/edk2/x64" "/usr/share/ovmf" "/usr/share/OVMF"; do
+  for location in "/usr/share/edk2/x64"; do
     if [ -d "$location" ]; then
       if find "$location" -name "*.qcow2" -o -name "*secboot*" | grep -q .; then
         ovmf_patched_exists=true

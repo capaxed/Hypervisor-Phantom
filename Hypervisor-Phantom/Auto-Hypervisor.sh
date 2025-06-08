@@ -137,7 +137,7 @@ main_menu() {
     done
     fmtr::format_text '\n  ' "[0]" " ${options[0]}\n" "$TEXT_BRIGHT_RED"
 
-    local choice="$(prmt::quick_prompt '  Enter your choice [0-10]: ')" && clear
+    local choice="$(prmt::double_prompt '  Enter your choice [0-10]: ')" && clear
     case $choice in
       1) fmtr::box_text "${options[1]}"; "./functions/virtualization.sh" ;;
       2) fmtr::box_text "${options[2]}"; "./functions/spoof_qemu_patch.sh" ;;

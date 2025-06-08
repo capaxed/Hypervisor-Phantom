@@ -24,10 +24,6 @@ REQUIRED_PKGS_Fedora=(
   util-linux-script patch @virtualization
 )
 
-REQUIRED_PKGS_Fedora=(
-  patch @virtualization
-)
-
 configure_firewall_arch() {
   fmtr::log "Configuring firewall for Arch..."
 
@@ -74,45 +70,50 @@ configure_system_installation() {
   local current_user
   current_user="$(whoami)"
 
-  # Helper to uncomment or append config
-  ensure_config() {
-    local file="$1"
-    local key="$2"
-    local value="$3"
-    if sudo grep -q "^${key}" "$file"; then
-      fmtr::info "$file: $key already set"
-    else
-      sudo sed -i "/${key}/s/^#//g" "$file" || echo "${key} ${value}" | sudo tee -a "$file" > /dev/null
-      fmtr::info "$file: Enabled $key"
-    fi
-  }
+  # Configure libvirtd.conf
+  if sudo grep -q "^unix_sock_group" "$libvirtd_conf"; then
+    fmtr::info "unix_sock_group already set"
+  else
+    sudo sed -i '/unix_sock_group/s/^#//g' "$libvirtd_conf"
+    fmtr::info "Enabled unix_sock_group"
+  fi
 
-  # Helper to set qemu.conf user/group
-  set_qemu_conf() {
-    local conf="$1" key="$2" val="$3"
-    if sudo grep -q "^${key} = \"${val}\"" "$conf"; then
-      fmtr::info "$conf: $key already set to $val"
-    else
-      sudo sed -i "s/#${key} = \".*\"/${key} = \"${val}\"/" "$conf" || echo "${key} = \"${val}\"" | sudo tee -a "$conf" > /dev/null
-      fmtr::info "$conf: Set $key = $val"
-    fi
-  }
+  if sudo grep -q "^unix_sock_rw_perms" "$libvirtd_conf"; then
+    fmtr::info "unix_sock_rw_perms already set"
+  else
+    sudo sed -i '/unix_sock_rw_perms/s/^#//g' "$libvirtd_conf"
+    fmtr::info "Enabled unix_sock_rw_perms"
+  fi
 
-  # Ensure configs
-  ensure_config "$libvirtd_conf" "unix_sock_group"
-  ensure_config "$libvirtd_conf" "unix_sock_rw_perms"
-  set_qemu_conf "$qemu_conf" "user" "$current_user"
-  set_qemu_conf "$qemu_conf" "group" "$current_user"
+  # Configure qemu.conf
+  if sudo grep -q "^user = \"$current_user\"" "$qemu_conf"; then
+    fmtr::info "qemu.conf: user already set to $current_user"
+  else
+    sudo sed -i "s/#user = \"root\"/user = \"$current_user\"/" "$qemu_conf"
+    fmtr::info "Set qemu.conf user = $current_user"
+  fi
 
-  # Groups: kvm, libvirt
-  for grp in kvm libvirt; do
-    if id -nG "$current_user" | sudo grep -qw "$grp"; then
-      fmtr::info "User $current_user already in $grp group"
-    else
-      sudo usermod -aG "$grp" "$current_user"
-      fmtr::info "Added $current_user to $grp group"
-    fi
-  done
+  if sudo grep -q "^group = \"$current_user\"" "$qemu_conf"; then
+    fmtr::info "qemu.conf: group already set to $current_user"
+  else
+    sudo sed -i "s/#group = \"root\"/group = \"$current_user\"/" "$qemu_conf"
+    fmtr::info "Set qemu.conf group = $current_user"
+  fi
+
+  # Add user to required groups
+  if id -nG "$current_user" | grep -qw "kvm"; then
+    fmtr::info "User $current_user already in kvm group"
+  else
+    sudo usermod -aG kvm "$current_user"
+    fmtr::info "Added $current_user to kvm group"
+  fi
+
+  if id -nG "$current_user" | grep -qw "libvirt"; then
+    fmtr::info "User $current_user already in libvirt group"
+  else
+    sudo usermod -aG libvirt "$current_user"
+    fmtr::info "Added $current_user to libvirt group"
+  fi
 
   # Enable libvirtd.socket if not enabled
   if ! sudo systemctl is-enabled libvirtd.socket &> /dev/null; then

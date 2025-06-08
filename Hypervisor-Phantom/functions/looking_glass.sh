@@ -92,33 +92,29 @@ install_looking_glass() {
     cmake ../ && sudo make install -j"$(nproc)"
   } &>> "$LOG_FILE"
 
-  fmtr::info "Cleaning up..."
-  cd ../../../ && rm -rf looking-glass-$LG_VERSION/
-
 }
 
 configure_ivshmem_shmem() {
+  local conf_file="/etc/tmpfiles.d/10-looking-glass.conf"
+  local username=${SUDO_USER:-$(whoami)}
 
-    local conf_file="/etc/tmpfiles.d/10-looking-glass.conf"
-    local username=${SUDO_USER:-$(whoami)}
+  if [ ! -f "$conf_file" ]; then
+    fmtr::info "Creating '10-looking-glass.conf'..."
+    echo "f /dev/shm/looking-glass 0660 ${username} kvm -" | sudo tee "$conf_file" &>> "$LOG_FILE"
+  else
+    fmtr::log "'10-looking-glass.conf' already exists; skipping creation."
+  fi
 
-    if [ ! -f "$conf_file" ]; then
-      fmtr::info "Creating '10-looking-glass.conf'..."
-      echo "f /dev/shm/looking-glass 0660 ${username} kvm -" | sudo tee "$conf_file" &>> "$LOG_FILE"
-    else
-      fmtr::log "'10-looking-glass.conf' already exists; skipping creation."
-    fi
+  if [ ! -e /dev/shm/looking-glass ]; then
+    fmtr::info "Creating '/dev/shm/looking-glass' and setting permissions..."
+    touch /dev/shm/looking-glass
+    sudo chown "${username}:kvm" /dev/shm/looking-glass
+    chmod 660 /dev/shm/looking-glass
+  else
+    fmtr::log "'/dev/shm/looking-glass' already exists; skipping creation."
+  fi
 
-    if [ ! -e /dev/shm/looking-glass ]; then
-      fmtr::info "Creating '/dev/shm/looking-glass' and setting permissions..."
-      touch /dev/shm/looking-glass
-      sudo chown "${username}:kvm" /dev/shm/looking-glass
-      chmod 660 /dev/shm/looking-glass
-    else
-      fmtr::log "'/dev/shm/looking-glass' already exists; skipping creation."
-    fi
-
-    local entry_to_add="$(cat <<- 'EOF'
+  local entry_to_add="$(cat <<- 'EOF'
 # Alias lg for Looking Glass shared memory setup
 alias lg='if [ ! -e /dev/shm/looking-glass ]; then \
   touch /dev/shm/looking-glass; \
@@ -129,25 +125,34 @@ else \
   /usr/local/bin/looking-glass-client -S -K -1; \
 fi'
 EOF
-    )"
+  )"
+  if ! grep -q "alias lg=" ~/.bashrc; then
+    fmtr::info "Adding LG alias to '~/.bashrc'..."
+    echo "$entry_to_add" >> ~/.bashrc
+  else
+    fmtr::log "The LG alias already exists in '~/.bashrc'; skipping creation."
+  fi
 
-    if ! grep -q "alias lg=" ~/.bashrc; then
-      fmtr::info "Adding LG alias to '~/.bashrc'..."
-      echo "$entry_to_add" >> ~/.bashrc
-    else
-      fmtr::log "The LG alias already exists in '~/.bashrc'; skipping creation."
-    fi
-
-    source "${HOME}/.bashrc"
-    fmtr::warn "TIP: Just enter 'lg' in a fresh terminal to launch LG."
-
+  source "${HOME}/.bashrc"
+  fmtr::warn "TIP: Just enter 'lg' in a fresh terminal to launch LG."
 }
 
 configure_ivshmem_kvmfr() {
+  fmtr::info "Creating DKMS symlinks for KVMFR..."
+  { cd ../../module && sudo dkms install . } &>> "$LOG_FILE"
 
   # The kernel module implements a basic interface to the IVSHMEM device for Looking Glass allowing DMA GPU transfers.
-
   local MEMORY_SIZE_MB="32"
+
+  while true; do
+    read -p "Enter ISHVEM Memory [32/64/128] in MB: " input
+    if [[ "$input" =~ ^(32|64|128)$ ]]; then
+      MEMORY_SIZE_MB="$input"
+      break
+    else
+      echo "Invalid input. Please enter a correct memory size."
+    fi
+  done
 
   # Temporary
   sudo modprobe kvmfr static_size_mb=$MEMORY_SIZE_MB
@@ -157,18 +162,38 @@ configure_ivshmem_kvmfr() {
 
   # Automatic (w/systemd)
   echo -e "# KVMFR Looking Glass module\nkvmfr" | sudo tee /etc/modules-load.d/kvmfr.conf
-
+  
+  # Get the current user's username
+  local CURRENT_USER=$(whoami)
+  
   # Permissions
-  sudo chown $(whoami):kvm /dev/kvmfr0
+  sudo chown $CURRENT_USER:kvm /dev/kvmfr0
 
+  sudo rm /etc/tmpfiles.d/10-looking-glass.conf &>> "$LOG_FILE"
+  sudo rm /dev/shm/looking-glass &>> "$LOG_FILE"
+
+  sudo sed -i "/etc/udev/rules.d/99-kvmfr.rules"
+  sudo bash -c "echo 'SUBSYSTEM==\"kvmfr\", OWNER=\"$CURRENT_USER\", GROUP=\"kvm\", MODE=\"0660\"' > "/etc/udev/rules.d/99-kvmfr.rules"
+}
+
+finalize_looking_glass () {
+  fmtr::info "Cleaning up..."
+  cd ../../../ && rm -rf looking-glass-$LG_VERSION/
 }
 
 main() {
 
   install_req_pkgs "LG"
+  
   install_looking_glass
-  configure_ivshmem_shmem
 
+  if prmt::yes_or_no "$(fmtr::ask 'IVSHMEM with the KVMFR module?')"; then
+    configure_ivshmem_kvmfr
+  else
+    configure_ivshmem_shmem
+  fi
+  
+  finalize_looking_glass
 }
 
 main
